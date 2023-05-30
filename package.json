@@ -1,0 +1,25 @@
+{
+  "name": "wassimovie-back",
+  "version": "1.0.0",
+  "description": "back for WassiMovie!",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "npx nodemon",
+    "migration:generate": "dotenv -- typeorm --dataSource='./src/models/datasource.js' migration:generate --outputJs --pretty ./src/models/migrations/$npm_config_name",
+    "postmigration:generate": "./src/models/postmigration.sh",
+    "migration:run": "dotenv -- typeorm --dataSource='./src/models/datasource.js' migration:run",
+    "migration:revert": "dotenv -- typeorm --dataSource='./src/models/datasource.js' migration:revert"
+  },
+  "author": "WassiTeam",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.1.0",
+    "dotenv-cli": "^7.2.1",
+    "express": "^4.18.2",
+    "nodemon": "^2.0.22",
+    "sqlite3": "^5.1.6",
+    "typeorm": "^0.3.16"
+  }
+}
