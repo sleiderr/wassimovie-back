@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "npx nodemon",
-    "migration:generate": "dotenv -- typeorm --dataSource='./src/models/datasource.js' migration:generate --outputJs --pretty ./src/models/migrations/$npm_config_name",
+    "migration:generate": "dotenv -- typeorm --dataSource='./src/models/datasource.js' migration:generate --outputJs --pretty src/models/migrations/$npm_config_name",
     "postmigration:generate": "./src/models/postmigration.sh",
     "migration:run": "dotenv -- typeorm --dataSource='./src/models/datasource.js' migration:run",
     "migration:revert": "dotenv -- typeorm --dataSource='./src/models/datasource.js' migration:revert"
@@ -18,6 +18,8 @@
     "dotenv": "^16.1.0",
     "dotenv-cli": "^7.2.1",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.2.2",
     "nodemon": "^2.0.22",
     "sqlite3": "^5.1.6",
     "typeorm": "^0.3.16"

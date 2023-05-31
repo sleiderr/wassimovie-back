@@ -10,5 +10,5 @@ fi
 
 # Format migrations file to use es modules format
 
-sed -i 's/const { MigrationInterface, QueryRunner } = require(\"typeorm\");/import typeorm from \"typeorm\";\n\nconst { MigrationInterface, QueryRunner } = typeorm;/g' "src/models/migrations/"*
-sed -i 's/module.exports = class/export default class/g' 'src/models/migrations'*
+sed -i 's/const { MigrationInterface, QueryRunner } = require(\"typeorm\");/import typeorm from \"typeorm\";\n\nconst { MigrationInterface, QueryRunner } = typeorm;/g' src/models/migrations/*
+sed -i 's/module.exports = class/export default class/g' src/models/migrations/*

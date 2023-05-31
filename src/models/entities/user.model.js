@@ -20,6 +20,7 @@ const User = new typeorm.EntitySchema({
       nullable: true,
     },
     hashPassword: {
+      select: false,
       type: String,
     }
   },
