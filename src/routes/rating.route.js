@@ -6,9 +6,12 @@ const ratingRouter = new Express.Router();
 
     // user adds new rating 
     ratingRouter.post('/add',verifyToken, (req,res) => {
+        console.log(req.username)
+        console.log(req.body.id)
+        console.log(req.body.rating)
         RatingModel
-        .findOneAndUpdate({userId: req.query.username,
-            movieId: req.query.movieid}, {rating: req.query.rating - 3}, {
+        .findOneAndUpdate({userId: req.username,
+            movieId: req.body.id}, {rating: parseInt(req.body.rating) - 3}, {
             new: true,
             upsert: true // Make this update into an upsert
           })
@@ -18,6 +21,7 @@ const ratingRouter = new Express.Router();
             
         })
         .catch(function (err) {
+            console.log(err)
             res.status(400).json({ message: err })
         })
     }) 
@@ -26,7 +30,7 @@ const ratingRouter = new Express.Router();
     // get rating for certain movie and user
     ratingRouter.get('/',verifyToken, (req,res) => {
         RatingModel
-        .findOne({userId: req.username,movieId: req.query.movieid})
+        .findOne({userId: req.username,movieId: req.query.id})
         .then(function (rating) {
             rating.rating += 3
             res.send(rating)
