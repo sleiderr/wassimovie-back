@@ -1,5 +1,5 @@
 import Express from "express";
-import { RatingModel } from "../models/mongoDB/userratings.model";
+import { RatingModel } from "../models/mongoDB/userratings.model.js";
 
 const ratingRouter = new Express.Router();
 
