@@ -5,17 +5,46 @@ import cors from 'cors'
 import movieRouter from "./src/routes/movie.route.js";
 import userRouter from "./src/routes/user.route.js";
 import mainRouter from "./src/routes/index.route.js";
+import { appDataSource } from "./src/models/datasource.js";
+import mongoose from "mongoose";
+import ratingRouter from "./src/routes/rating.route.js";
 
-dotenv.config();
+dotenv.config()
+
+appDataSource
+  .initialize()
+  .then(() => {
+    console.log('Data Source has been initialized!');
+  })
+  .catch((err) => {
+    console.error('Error during Data Source initialization:', err);
+  });
+
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((err) => {
+    console.error('Failed to connect to MongoDB', err);
+  });
 
 const app = express();
+
 app.use(cors());
-const port = process.env.PORT;
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-app.use('/',mainRouter)
-app.use('/movie',movieRouter)
-app.use('/user',userRouter)
+// Register routes
+app.use('/',mainRouter);
+app.use('/movie',movieRouter);
+app.use('/user',userRouter);
+app.use('/rating',ratingRouter)
 
+const port = parseInt(process.env.PORT || '8080');
+  
 app.listen(port, () => {
-  console.log(`WassiBack listening on port ${port}`)
-})
+  console.log(`Server listening at http://localhost:${port}`);
+});
