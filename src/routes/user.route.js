@@ -27,11 +27,10 @@ userRouter.post('/login', function (req, res) {
     })
     .getOne()
     .then(function (user) {
-      console.log(user)
       assert.equal(hashPassword(req.body.password),user.hashPassword,'Invalid user credentials');
       const payload = {username: user.username}
       res.json({
-        code: jwt.sign(payload,process.env.JWT_SECRET_KEY,{ expiresIn: '30d' } )
+        code: `Bearer ${jwt.sign(payload,process.env.JWT_SECRET_KEY,{ expiresIn: '30d' } )}`
       })
     })
     .catch(function () {
