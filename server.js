@@ -7,6 +7,7 @@ import userRouter from "./src/routes/user.route.js";
 import mainRouter from "./src/routes/index.route.js";
 import { appDataSource } from "./src/models/datasource.js";
 import mongoose from "mongoose";
+import ratingRouter from "./src/routes/rating.route.js";
 
 dotenv.config()
 
@@ -40,6 +41,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/',mainRouter);
 app.use('/movie',movieRouter);
 app.use('/user',userRouter);
+app.use('/rating',ratingRouter)
 
 const port = parseInt(process.env.PORT || '8080');
   
