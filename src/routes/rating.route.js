@@ -40,5 +40,17 @@ const ratingRouter = new Express.Router();
         })
     })
 
+    // get ratings by user
+    ratingRouter.get('/user',verifyToken, (req,res) => {
+        RatingModel
+        .find({userId: req.username})
+        .then(function (ratings) {
+            res.send(ratings)
+        })
+        .catch(function (err) {
+            res.status(400).json({ message: err })
+        })
+    }) 
+
 export default ratingRouter;
     
