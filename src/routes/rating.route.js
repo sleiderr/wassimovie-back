@@ -1,5 +1,6 @@
 import Express from "express";
 import RatingModel from "../models/mongoDB/userratings.model.js";
+import { verifyToken } from '../middlewares/tokencheck.mw.js';
 
 const ratingRouter = new Express.Router();
 
