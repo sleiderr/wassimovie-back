@@ -29,6 +29,7 @@ const ratingRouter = new Express.Router();
 
     // get rating for certain movie and user
     ratingRouter.get('/',verifyToken, (req,res) => {
+        
         RatingModel
         .findOne({userId: req.username,movieId: req.query.id})
         .then(function (rating) {
@@ -45,7 +46,10 @@ const ratingRouter = new Express.Router();
         RatingModel
         .find({userId: req.username})
         .then(function (ratings) {
-            res.send(ratings)
+            res.send(ratings.map((rating) => {
+                rating.rating += 3;
+                return rating
+            }))
         })
         .catch(function (err) {
             res.status(400).json({ message: err })
