@@ -67,24 +67,14 @@ movieRouter.get('/trending', (req,res) => {
     })
 })
 
-movieRouter.get('/recommended', verifyToken, (req,res) => {
-  axios
-    .get(process.env.ALGO_URL + req.username)
-    .then(movieIds => {
-      res.send(
-        movieIds.map((id) => {
-          MovieModel
-            .findOne({imdb_id: id})
-            .then(function (movie) {
-              return movie
-            })
-            .catch(function (err) {
-              res.status(400).json({ message: err })
-            })
-        })
-      )
-    })
-    .catch(err => res.status(400).json({ message: err }))
+movieRouter.get('/recommended', verifyToken, async (req,res) => {
+  const movieIds = (await axios.get(process.env.ALGO_URL + req.username)).data;
+  const response = []
+  for (const id of movieIds) {
+    const result = await MovieModel.findOne({imdb_id: id});
+    response.push(result);
+  }
+  res.json(response);
 })
 
 export default movieRouter;
