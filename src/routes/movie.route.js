@@ -13,6 +13,7 @@ movieRouter.get('/search', function (req,res) {
   MovieModel
     .find({title: queryParam})
     .sort({popularity: -1})
+    .limit(100)
     .then(function (movies) {
       res.send(movies)
     })
@@ -68,13 +69,17 @@ movieRouter.get('/trending', (req,res) => {
 })
 
 movieRouter.get('/recommended', verifyToken, async (req,res) => {
-  const movieIds = (await axios.get(process.env.ALGO_URL + req.username)).data;
-  const response = []
-  for (const id of movieIds) {
-    const result = await MovieModel.findOne({imdb_id: id});
-    response.push(result);
+  try {
+    const movieIds = (await axios.get(process.env.ALGO_URL + req.username)).data;
+    const response = []
+    for (const id of movieIds) {
+      const result = await MovieModel.findOne({imdb_id: id});
+      response.push(result);
+    }
+    res.json(response);
+  } catch (err) {
+    res.status(404).json({ message: 'Recommendations not found' })
   }
-  res.json(response);
 })
 
 export default movieRouter;

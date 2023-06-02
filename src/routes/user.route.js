@@ -2,6 +2,7 @@ import express from 'express';
 import { appDataSource } from '../models/datasource.js';
 
 import User from '../models/entities/user.model.js';
+import UserMongoModel from '../models/mongoDB/user.model.js'
 import { hashPassword } from '../utils/user.util.js';
 import assert from 'assert';
 
@@ -53,25 +54,28 @@ userRouter.get('/me',verifyToken, function (req,res) {
 
 // Create new user
 userRouter.post('/new', function (req, res) {
-  console.log(req.body)
-  const userRepository = appDataSource.getRepository(User);
-  const newUser = userRepository.create({
-    email: req.body.email,
-    username: req.body.username,
-    hashPassword: hashPassword(req.body.password),
-  });
+  try {
+    const userRepository = appDataSource.getRepository(User);
+    const newUser = userRepository.create({
+      email: req.body.email,
+      username: req.body.username,
+      hashPassword: hashPassword(req.body.password),
+      ...(req.body.firstname ? {firstname: req.body.firstname} : {firstname: ''}),
+      ...(req.body.lastname ? {lastname : req.body.lastname} : {lastname: ''})
+    });
 
-  userRepository
-    .insert(newUser)
-    .then(function (newDocument) {
-      UserMongoModel
-        .findOneAndUpdate({userId: req.body.username}, {
-            new: true,
-            upsert: true // Make this update into an upsert
-          })
-        .then(function(){res.status(201).json(newDocument);})
+    userRepository
+      .insert(newUser)
+      .then(function (newDocument) {
+        const mongoUser = new UserMongoModel({userId: req.body.username});
+        mongoUser.save();
+      });
+    
+    const payload = {username: req.body.username};
+    res.json({
+      code: `Bearer ${jwt.sign(payload,process.env.JWT_SECRET_KEY,{ expiresIn: '30d' } )}`
     })
-    .catch(function (error) {
+  } catch (error) {
       console.error(error);
       if (error.code === '23505') {
         res.status(400).json({
@@ -80,7 +84,7 @@ userRouter.post('/new', function (req, res) {
       } else {
         res.status(500).json({ message: 'Error while creating the user' });
       }
-    });
+  };
 });
 
 // Update authenticated user info
