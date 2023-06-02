@@ -1,5 +1,7 @@
 import express from 'express';
 import MovieModel from '../models/mongoDB/movie.model.js';
+import { verifyToken } from '../middlewares/tokencheck.mw.js';
+import axios from 'axios';
 
 const movieRouter = new express.Router();
 
@@ -63,6 +65,26 @@ movieRouter.get('/trending', (req,res) => {
     .catch(err => {
       res.status(400).json({ message: err });
     })
+})
+
+movieRouter.get('/recommended', verifyToken, (req,res) => {
+  axios
+    .get(process.env.ALGO_URL + req.username)
+    .then(movieIds => {
+      res.send(
+        movieIds.map((id) => {
+          MovieModel
+            .findOne({imdb_id: id})
+            .then(function (movie) {
+              return movie
+            })
+            .catch(function (err) {
+              res.status(400).json({ message: err })
+            })
+        })
+      )
+    })
+    .catch(err => res.status(400).json({ message: err }))
 })
 
 export default movieRouter;
