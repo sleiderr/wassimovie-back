@@ -64,7 +64,12 @@ userRouter.post('/new', function (req, res) {
   userRepository
     .insert(newUser)
     .then(function (newDocument) {
-      res.status(201).json(newDocument);
+      UserMongoModel
+        .findOneAndUpdate({userId: req.body.username}, {
+            new: true,
+            upsert: true // Make this update into an upsert
+          })
+        .then(function(){res.status(201).json(newDocument);})
     })
     .catch(function (error) {
       console.error(error);
